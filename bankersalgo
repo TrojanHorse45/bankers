@@ -1,0 +1,78 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+int main(){
+    int n;
+    printf("Enter the number of process:\n");
+    scanf("%d",&n);
+    int r;
+    printf("Enter the number of resources:\n");
+    scanf("%d",&r);
+    int alloc[n][r],max[n][r],need[n][r],avail[r],work[r],finish[n],safe[n];
+    int idx=0;
+    for(int i=0;i<n;i++){
+        finish[i]=0;
+    }
+    printf("Enter the allocation matrix:\n");
+    for(int i=0;i<n;i++){
+        for(int j=0;j<r;j++){
+            scanf("%d",&alloc[i][j]);
+        }
+    }
+    printf("Enter the max matrix:\n");
+    for(int i=0;i<n;i++){
+        for(int j=0;j<r;j++){
+            scanf("%d",&max[i][j]);
+        }
+    }
+    printf("Processing the need matrix:\n");
+    for(int i=0;i<n;i++){
+        for(int j=0;j<r;j++){
+            need[i][j]=max[i][j]-alloc[i][j];
+        }
+    }
+    int found;
+    printf("Enter the available resources:\n");
+    for(int i=0;i<r;i++){
+        scanf("%d",&avail[i]);
+        work[i]=avail[i];
+    }
+    for(int k=0;k<n;k++){
+        found=0;
+        for(int i=0;i<n;i++){
+            if(!finish[i]){
+                int canAlloc=1;
+                for(int j=0;j<r;j++){
+                    if(need[i][j]>work[j]){
+                        canAlloc=0;
+                        break;
+                    }
+                }
+                if(canAlloc){
+                    safe[idx++]=i;
+                    finish[i]=1;
+                    found=1;
+                    for(int j=0;j<r;j++){
+                        work[j]+=alloc[i][j];
+                    }
+                }
+            }
+        }
+        if(!found) break;
+    }
+    int flag=1;
+    for(int i=0;i<n;i++){
+        if(finish[i]==0){
+            flag=0;
+            break;
+        }
+    }
+    if(flag){
+        printf("Safe Sequence: ");
+        for(int i=0;i<n;i++){
+            printf("%d ",safe[i]);
+        }
+    }else{
+        printf("Deadlock\n");
+    }
+}
